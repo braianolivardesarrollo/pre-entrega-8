@@ -4,7 +4,7 @@
 // El botón para comprar el carrito debería mostrar un mensaje al usuario confirmando la compra
 // y vaciar el carrito
 
-const productos = [
+const productosIniciales = [
   {
     id: 1,
     nombre: "Pinza",
@@ -63,7 +63,13 @@ const productos = [
   },
 ];
 
-const carrito = [];
+let productos = JSON.parse(localStorage.getItem("productos")) ?? productosIniciales;
+
+let carrito = JSON.parse(localStorage.getItem("carrito")) ?? [];
+
+function guardarProductos() {
+  localStorage.setItem("productos", JSON.stringify(productos));
+}
 
 
 function imprimirElementosEnHTML(listaProductos) {
@@ -98,6 +104,8 @@ function imprimirElementosEnHTML(listaProductos) {
 btnEliminar.addEventListener("click", () => {
   productos.splice(productos.indexOf(producto), 1);
 
+  guardarProductos();
+
   imprimirElementosEnHTML(productos);
 
 const mensajeCarrito = document.getElementById("mensaje-carrito");
@@ -113,6 +121,9 @@ const mensajeCarrito = document.getElementById("mensaje-carrito");
 function agregarProductoAlCarrito(producto) {
 
   carrito.push(producto);
+
+  localStorage.setItem("carrito", JSON.stringify(carrito));
+
   const mensajeCarrito = document.getElementById("mensaje-carrito");
  
   mensajeCarrito.textContent = `Agregaste ${producto.nombre} al carrito`;
@@ -156,6 +167,9 @@ contenedorCarrito.appendChild(botonComprarCarrito);
 
 botonComprarCarrito.addEventListener("click", () => {
   carrito.length = 0;
+
+localStorage.setItem("carrito", JSON.stringify(carrito));
+
   imprimirCarritoEnHTML();
 
   const mensajeCarrito = document.getElementById("mensaje-carrito");
@@ -202,7 +216,14 @@ function obtenerProductoDelForm() {
 
     const inputDescripcion = document.getElementById("input-descripcion").value;
 
-    productos.push({id: productos.length +1, nombre: inputNombre, precio: inputPrecio, imagen: inputImagen, descripcion: inputDescripcion});
+    productos.push({id: productos.length +1,
+      nombre: inputNombre,
+      precio: inputPrecio,
+      imagen: inputImagen,
+      descripcion: inputDescripcion
+    });
+
+    guardarProductos();
 
     imprimirElementosEnHTML(productos);
 
